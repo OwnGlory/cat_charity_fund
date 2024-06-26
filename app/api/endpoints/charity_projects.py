@@ -16,7 +16,11 @@ from app.api.validators import (
 router = APIRouter()
 
 
-@router.post('/', response_model=CharityProjectsDB)
+@router.post(
+    '/',
+    response_model=CharityProjectsDB,
+    response_model_exclude_none=True,
+)
 async def create_new_charity_project(
         charity_project: CharityProjectsCreate,
         session: AsyncSession = Depends(get_async_session)
@@ -28,7 +32,9 @@ async def create_new_charity_project(
 
 
 @router.get(
-    '/'
+    '/',
+    response_model=CharityProjectsDB,
+    response_model_exclude_none=True,
 )
 async def get_all_charity_projects(
     session: AsyncSession = Depends(get_async_session)

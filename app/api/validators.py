@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.charity_projects import charity_projects_crud
 from app.models import CharityProjects
+from app.schemas.validators import ValidationError
 
 
 async def check_name_duplicate(
@@ -13,9 +14,8 @@ async def check_name_duplicate(
         project_name, session
     )
     if project_id is not None:
-        raise HTTPException(
-            status_code=422,
-            detail='Переговорка с таким именем уже существует!',
+        raise HTTPException(status_code=404, detail=ValidationError(
+            message="Проект с таким именем уже существует!").dict()
         )
 
 
@@ -28,7 +28,7 @@ async def check_project_exists(
     )
     if charity_project is None:
         raise HTTPException(
-            status_code=404,
+            status_code=422,
             detail='Переговорка не найдена!'
         )
     return charity_project

@@ -33,9 +33,12 @@ class CharityProjectsDB(BaseModel):
     full_amount: int = Field(0)
     id: int = Field(0)
     invested_amount: int = Field(0)
-    fully_invested: bool = Field(False)
+    fully_invested: bool = Field(True)
     create_date: datetime
     close_date: datetime
+
+    class Config:
+        orm_mode = True
 
 
 class CharityProjectsUpdate(CharityProjectsBase):

@@ -1,7 +1,7 @@
 import asyncio
 
 try:
-    from app.core.init_db import create_user
+    from app.core.db import create_user
 except (ImportError, NameError):
     raise ImportError(
         'Не удалось импортировать функцию `create_user` из модуля '
