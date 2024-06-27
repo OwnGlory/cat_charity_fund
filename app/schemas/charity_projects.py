@@ -12,7 +12,7 @@ class CharityProjectsBase(BaseModel):
             'example': {
                 "name": "Первый проект",
                 "description": "Проект для пожертвований",
-                "full_amount": 100000
+                "full_amount": 1000
             }
         }
 
@@ -25,20 +25,6 @@ class CharityProjectsCreate(CharityProjectsBase):
     )
     description: str = Field(..., min_length=2)
     full_amount: int = Field(..., gt=0)
-
-
-class CharityProjectsDB(BaseModel):
-    name: str = Field("Название проекта")
-    description: str = Field("Описание проекта")
-    full_amount: int = Field(0)
-    id: int = Field(0)
-    invested_amount: int = Field(0)
-    fully_invested: bool = Field(True)
-    create_date: datetime
-    close_date: datetime
-
-    class Config:
-        orm_mode = True
 
 
 class CharityProjectsUpdate(CharityProjectsBase):
@@ -56,3 +42,17 @@ class CharityProjectsUpdate(CharityProjectsBase):
         if value is None:
             raise ValueError('Имя переговорки не может быть пустым!')
         return value
+
+
+class CharityProjectsDB(BaseModel):
+    name: str = Field("Название проекта")
+    description: str = Field("Описание проекта")
+    full_amount: int = Field(0)
+    id: int = Field(0)
+    invested_amount: int = Field(0)
+    fully_invested: bool = Field(False)
+    create_date: Optional[datetime]
+    close_date: Optional[datetime]
+
+    class Config:
+        orm_mode = True

@@ -1,33 +1,39 @@
 from fastapi import APIRouter, Depends, HTTPException
-
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.schemas.donation import (
     DonationCreate,
-    # DonationDB,
+    DonationDB,
+    DonationAllDB,
 )
 
 from app.core.db import get_async_session
 from app.crud.donation import donation_crud
+from app.crud.investions import DataBaseWork
+from app.services.investions import invest_donation
 
 router = APIRouter()
 
 
 @router.post(
-    '/'
-    # response_model=DonationDB,
-    # response_model_exclude_none=True,
+    '/',
+    response_model=DonationAllDB,
+    response_model_exclude_none=True,
 )
 async def create_new_donation(
         donation: DonationCreate,
         session: AsyncSession = Depends(get_async_session)
 ):
+    data_base_work = DataBaseWork(session)
     new_donation = await donation_crud.create(donation, session)
+    await invest_donation(new_donation, data_base_work)
     return new_donation
 
 
 @router.get(
     '/',
+    response_model=list[DonationDB],
+    response_model_exclude_none=True,
 )
 async def get_all_donation_info(
     session: AsyncSession = Depends(get_async_session)
@@ -37,8 +43,8 @@ async def get_all_donation_info(
 
 
 @router.get(
-    '/{my}'
-    # response_model=DonationDB,
+    '/{my}',
+    response_model=list[DonationAllDB],
 )
 async def get_user_donation_info(
         my: int,

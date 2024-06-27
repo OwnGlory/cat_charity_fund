@@ -3,12 +3,14 @@ from sqlalchemy import (
     String,
     Text
 )
+
+from app.models.base import BaseData
 from app.core.db import Base
 
 
-class CharityProjects(Base):
+class CharityProjects(BaseData, Base):
     """
     Модель таблицы благотворительных проектов.
     """
-    name = Column(String(100), unique=True, nullable=False)  # Уникальное название проекта
-    description = Column(Text, nullable=False)  # Описание. Добавить проверку на > 1 символа и обязательное поле
+    name = Column(String(100), unique=True, nullable=False)
+    description = Column(Text, nullable=False)

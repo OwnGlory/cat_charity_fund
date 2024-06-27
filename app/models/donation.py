@@ -2,14 +2,15 @@ from sqlalchemy import (
     Column,
     Integer,
     Text,
-    # ForeignKey,
+    ForeignKey,
 )
+from app.models.base import BaseData
 from app.core.db import Base
 
 
-class Donation(Base):
+class Donation(BaseData, Base):
     """
     Модель таблицы пожертвований.
     """
-    user_id = Column(Integer,)  # Id пользователя. ForeignKey из Users.
-    comment = Column(Text, nullable=True)  # Комментарий. Необязательное поле.
+    user_id = Column(Integer, ForeignKey('user.id'))
+    comment = Column(Text, nullable=True)

@@ -2,11 +2,11 @@ from pydantic import BaseModel
 
 
 class ValidationError(BaseModel):
-    message: str
+    detail: str
 
     class Config:
         schema_extra = {
             "example": {
-                "detail": "Validation error message"
+                "detail": "Пример сообщения об ошибке"
             }
         }
