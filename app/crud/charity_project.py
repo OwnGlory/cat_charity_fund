@@ -15,13 +15,12 @@ class CRUDCharityProject(CRUDBase):
             obj_id: int,
             session: AsyncSession
     ):
-        # db_obj = await session.execute(
-        #     select(self.model).where(
-        #         self.model.id == obj_id
-        #     )
-        # )
-        db_obj = await session.get(self.model, obj_id)
-        return db_obj
+        db_obj = await session.execute(
+            select(self.model).where(
+                self.model.id == obj_id
+            )
+        )
+        return db_obj.scalars().first()
 
     async def create(
             self,
@@ -71,6 +70,8 @@ class CRUDCharityProject(CRUDBase):
                 CharityProject.name == project_name
             )
         )
+        print(project_name)
+        print(CharityProject.name)
         return db_project_id.scalars().first()
 
 

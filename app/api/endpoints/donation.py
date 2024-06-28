@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.schemas.donation import (
@@ -51,12 +51,11 @@ async def get_all_donation_info(
     response_model=list[DonationAllDB],
 )
 async def get_user_donation_info(
-        my: int,
         session: AsyncSession = Depends(get_async_session),
-        user: User = Depends(current_user)
+        my: User = Depends(current_user)
 ):
     user_donation = await donation_crud.get_donations_by_user(
-        session=session, user=user
+        session=session, user=my
     )
     if user_donation is None:
         raise HTTPException(
@@ -64,3 +63,27 @@ async def get_user_donation_info(
             detail='Пожертвований пока нету.'
         )
     return user_donation
+
+
+@router.patch(
+    '/{donation_id}'
+)
+async def update_donation(
+        session: AsyncSession = Depends(get_async_session),
+):
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail='Нельзя изменять пожертвования!'
+    )
+
+
+@router.delete(
+    '/{donation_id}'
+)
+async def update_donation(
+        session: AsyncSession = Depends(get_async_session),
+):
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail='Нельзя удалять пожертвования!'
+    )

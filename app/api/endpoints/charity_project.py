@@ -12,7 +12,8 @@ from app.schemas.charity_project import (
 from app.api.validators import (
     check_name_duplicate, check_project_exists,
     check_project_open, check_project_full_amount,
-    check_project_invested_amount, check_valid_name_for_project
+    check_project_invested_amount, check_valid_name_for_project,
+    check_valid_full_amount_for_project, check_valid_description_for_project
 )
 from app.services.investions import invest_in_project
 from app.core.user import current_superuser
@@ -31,7 +32,7 @@ async def create_new_charity_project(
         session: AsyncSession = Depends(get_async_session)
 ):
     data_base_work = DataBaseWork(session)
-    await check_valid_name_for_project(charity_project.name)
+    await check_valid_name_for_project(charity_project)
     await check_name_duplicate(charity_project.name, session)
     new_project = await charity_projects_crud.create(charity_project, session)
     await invest_in_project(new_project, data_base_work)
@@ -53,6 +54,8 @@ async def get_all_charity_projects(
 
 @router.patch(
     '/{project_id}',
+    response_model=CharityProjectDB,
+    response_model_exclude_none=True,
     dependencies=[Depends(current_superuser)]
 )
 async def partially_update_charity_project(
@@ -66,7 +69,11 @@ async def partially_update_charity_project(
 
     await check_project_open(charity_project)
     await check_project_full_amount(obj_in, charity_project)
-    await check_name_duplicate(obj_in.name, session)
+    if obj_in.name is not None:
+        await check_valid_name_for_project(obj_in)
+        await check_name_duplicate(obj_in.name, session)
+    await check_valid_full_amount_for_project(obj_in)
+    await check_valid_description_for_project(obj_in)
 
     charity_project = await charity_projects_crud.update(
         charity_project, obj_in, session
@@ -90,43 +97,3 @@ async def remove_charity_project(
         charity_project, session
     )
     return charity_project
-
-    # responses={
-    #     status.HTTP_200_OK: {
-    #         "model": CharityProjectsDB,
-    #         "description": "Successful Response",
-    #     },
-    #     status.HTTP_400_BAD_REQUEST: {
-    #         "model": ValidationError,
-    #         "description": "Not unique name",
-    #         "content": {
-    #             "application/json": {
-    #                 "example": {
-    #                     "detail": "Проект с таким именем уже существует!",
-    #                 }
-    #             }
-    #         }
-    #     },
-    #     status.HTTP_401_UNAUTHORIZED: {
-    #         "model": ValidationError,
-    #         "description": "Missing token or inactive user.",
-    #         "content": {
-    #             "application/json": {
-    #                 "example": {
-    #                     "detail": "Unauthorized",
-    #                 }
-    #             }
-    #         }
-    #     },
-    #     status.HTTP_403_FORBIDDEN: {
-    #         "model": ValidationError,
-    #         "description": "Not a superuser.",
-    #         "content": {
-    #             "application/json": {
-    #                 "example": {
-    #                     "detail": "Forbidden",
-    #                 }
-    #             }
-    #         }
-    #     },
-    # },

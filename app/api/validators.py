@@ -3,7 +3,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.charity_project import charity_projects_crud
 from app.models import CharityProject
-# from app.schemas.validators import ValidationError
 
 
 async def check_name_duplicate(
@@ -13,9 +12,9 @@ async def check_name_duplicate(
     project_id = await charity_projects_crud.get_project_id_by_name(
         project_name, session
     )
-    if project_id is not None:
+    if project_id:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail="Проект с таким именем уже существует!",
         )
 
@@ -29,7 +28,7 @@ async def check_project_exists(
     )
     if charity_project is None:
         raise HTTPException(
-            status_code=422,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail='Переговорка не найдена!'
         )
     return charity_project
@@ -62,9 +61,28 @@ async def check_project_full_amount(obj_in, charity_project):
         )
 
 
-async def check_valid_name_for_project(name):
-    if name is None or len(name) > 100:
+async def check_valid_name_for_project(obj_in):
+    if (
+        obj_in.name is None or len(obj_in.name) > 100 or
+        not obj_in.name.strip()
+    ):
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Не подходящее имя для проекта!"
+        )
+
+
+async def check_valid_full_amount_for_project(obj_in):
+    if obj_in.full_amount is not None and obj_in.full_amount <= 0:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Цель фонда должна быть больше нуля!"
+        )
+
+
+async def check_valid_description_for_project(obj_in):
+    if obj_in.description is not None and not obj_in.description.strip():
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Описание не может быть пустым!"
         )
