@@ -2,12 +2,12 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_async_session
-from app.crud.charity_projects import charity_projects_crud
+from app.crud.charity_project import charity_projects_crud
 from app.crud.investions import DataBaseWork
-from app.schemas.charity_projects import (
-    CharityProjectsCreate,
-    CharityProjectsUpdate,
-    CharityProjectsDB,
+from app.schemas.charity_project import (
+    CharityProjectCreate,
+    CharityProjectUpdate,
+    CharityProjectDB,
 )
 from app.api.validators import (
     check_name_duplicate, check_project_exists,
@@ -22,12 +22,12 @@ router = APIRouter()
 
 @router.post(
     '/',
-    response_model=CharityProjectsDB,
+    response_model=CharityProjectDB,
     response_model_exclude_none=True,
     dependencies=[Depends(current_superuser)]
 )
 async def create_new_charity_project(
-        charity_project: CharityProjectsCreate,
+        charity_project: CharityProjectCreate,
         session: AsyncSession = Depends(get_async_session)
 ):
     data_base_work = DataBaseWork(session)
@@ -41,7 +41,7 @@ async def create_new_charity_project(
 
 @router.get(
     '/',
-    response_model=list[CharityProjectsDB],
+    response_model=list[CharityProjectDB],
     response_model_exclude_none=True,
 )
 async def get_all_charity_projects(
@@ -57,7 +57,7 @@ async def get_all_charity_projects(
 )
 async def partially_update_charity_project(
         project_id: int,
-        obj_in: CharityProjectsUpdate,
+        obj_in: CharityProjectUpdate,
         session: AsyncSession = Depends(get_async_session)
 ):
     charity_project = await check_project_exists(

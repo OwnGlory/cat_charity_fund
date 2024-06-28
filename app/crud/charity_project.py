@@ -4,11 +4,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.encoders import jsonable_encoder
 
-from app.models import CharityProjects
+from app.models import CharityProject
 from app.crud.base import CRUDBase
 
 
-class CRUDCharityProjects(CRUDBase):
+class CRUDCharityProject(CRUDBase):
 
     async def get(
             self,
@@ -67,14 +67,14 @@ class CRUDCharityProjects(CRUDBase):
         session: AsyncSession
     ) -> Optional[int]:
         db_project_id = await session.execute(
-            select(CharityProjects.id).where(
-                CharityProjects.name == project_name
+            select(CharityProject.id).where(
+                CharityProject.name == project_name
             )
         )
         return db_project_id.scalars().first()
 
 
-charity_projects_crud = CRUDCharityProjects(CharityProjects)
+charity_projects_crud = CRUDCharityProject(CharityProject)
 
 # async def create_charity_projects(
 #     new_project: CharityProjectsCreate,

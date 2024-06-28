@@ -8,7 +8,7 @@ from app.models.base import BaseData
 from app.core.db import Base
 
 
-class CharityProjects(BaseData, Base):
+class CharityProject(BaseData, Base):
     """
     Модель таблицы благотворительных проектов.
     """

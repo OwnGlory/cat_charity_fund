@@ -1,8 +1,8 @@
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.crud.charity_projects import charity_projects_crud
-from app.models import CharityProjects
+from app.crud.charity_project import charity_projects_crud
+from app.models import CharityProject
 # from app.schemas.validators import ValidationError
 
 
@@ -23,7 +23,7 @@ async def check_name_duplicate(
 async def check_project_exists(
         project_id: int,
         session: AsyncSession
-) -> CharityProjects:
+) -> CharityProject:
     charity_project = await charity_projects_crud.get(
         project_id, session
     )

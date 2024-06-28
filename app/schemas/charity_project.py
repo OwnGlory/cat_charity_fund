@@ -4,7 +4,7 @@ from datetime import datetime
 from pydantic import BaseModel, Field, validator, Extra
 
 
-class CharityProjectsBase(BaseModel):
+class CharityProjectBase(BaseModel):
 
     class Config:
         extra = Extra.forbid
@@ -17,9 +17,9 @@ class CharityProjectsBase(BaseModel):
         }
 
 
-class CharityProjectsCreate(CharityProjectsBase):
+class CharityProjectCreate(CharityProjectBase):
     name: str = Field(
-        ..., max_length=100,
+        ..., min_length=1, max_length=100,
         title='Название проекта',
         description='Уникальное названние проекта'
     )
@@ -27,7 +27,7 @@ class CharityProjectsCreate(CharityProjectsBase):
     full_amount: int = Field(..., gt=0)
 
 
-class CharityProjectsUpdate(CharityProjectsBase):
+class CharityProjectUpdate(CharityProjectBase):
     id: int
     name: Optional[str] = Field(
         None, max_length=100,
@@ -44,7 +44,7 @@ class CharityProjectsUpdate(CharityProjectsBase):
         return value
 
 
-class CharityProjectsDB(BaseModel):
+class CharityProjectDB(BaseModel):
     name: Optional[str] = Field("Название проекта")
     description: Optional[str] = Field("Описание проекта")
     full_amount: Optional[int] = Field(0)
