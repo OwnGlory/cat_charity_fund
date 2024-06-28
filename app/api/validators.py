@@ -33,3 +33,38 @@ async def check_project_exists(
             detail='Переговорка не найдена!'
         )
     return charity_project
+
+
+async def check_project_open(charity_project):
+    if charity_project.fully_invested:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Нельзя редактировать закрытый проект!"
+        )
+
+
+async def check_project_invested_amount(charity_project):
+    if charity_project.invested_amount:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="В проект были внесены средства, не подлежит удалению!"
+        )
+
+
+async def check_project_full_amount(obj_in, charity_project):
+    if (
+        obj_in.full_amount and
+        obj_in.full_amount < charity_project.invested_amount
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Требуемая сумма не может быть меньше уже вложенной!"
+        )
+
+
+async def check_valid_name_for_project(name):
+    if name is None or len(name) > 100:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Не подходящее имя для проекта!"
+        )

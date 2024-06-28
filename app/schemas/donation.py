@@ -7,7 +7,7 @@ from pydantic import (
 
 
 class DonationBase(BaseModel):
-    full_amount: PositiveInt
+    full_amount: Optional[PositiveInt]
     comment: Optional[str]
 
     class Config:
@@ -23,28 +23,22 @@ class DonationBase(BaseModel):
 
 class DonationCreate(DonationBase):
     full_amount: PositiveInt
-    # create_date: Optional[datetime] = Field(datetime.now)
 
 
-class DonationDB(DonationBase):
-    full_amount: Optional[PositiveInt]
-    comment: Optional[str] = Field("Комментарий")
+class DonationAllDB(DonationBase):
     id: Optional[int]
     create_date: Optional[datetime]
-    user_id: Optional[int]
-    invested_amount: Optional[int] = Field(0)
-    fully_invested: Optional[bool] = Field(False)
-    close_date: Optional[datetime]
 
     class Config:
         orm_mode = True
 
 
-class DonationAllDB(DonationBase):
-    full_amount: int
-    comment: Optional[str]
-    id: Optional[int]
+class DonationDB(DonationAllDB):
+    user_id: Optional[int]
+    invested_amount: Optional[int] = Field(0)
+    fully_invested: Optional[bool] = Field(False)
     create_date: Optional[datetime]
+    close_date: Optional[datetime]
 
     class Config:
         orm_mode = True

@@ -1,4 +1,5 @@
 from typing import Optional
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.encoders import jsonable_encoder
@@ -20,6 +21,18 @@ class CRUDCharityProjects(CRUDBase):
         #     )
         # )
         db_obj = await session.get(self.model, obj_id)
+        return db_obj
+
+    async def create(
+            self,
+            obj_in,
+            session: AsyncSession,
+    ):
+        obj_in_data = obj_in.dict()
+        db_obj = self.model(**obj_in_data)
+        session.add(db_obj)
+        await session.commit()
+        await session.refresh(db_obj)
         return db_obj
 
     async def update(

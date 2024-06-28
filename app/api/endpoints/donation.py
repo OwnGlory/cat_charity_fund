@@ -7,6 +7,8 @@ from app.schemas.donation import (
     DonationAllDB,
 )
 
+from app.core.user import current_superuser, current_user
+from app.models import User
 from app.core.db import get_async_session
 from app.crud.donation import donation_crud
 from app.crud.investions import DataBaseWork
@@ -22,10 +24,11 @@ router = APIRouter()
 )
 async def create_new_donation(
         donation: DonationCreate,
-        session: AsyncSession = Depends(get_async_session)
+        session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(current_user),
 ):
     data_base_work = DataBaseWork(session)
-    new_donation = await donation_crud.create(donation, session)
+    new_donation = await donation_crud.create(donation, session, user)
     await invest_donation(new_donation, data_base_work)
     return new_donation
 
@@ -34,6 +37,7 @@ async def create_new_donation(
     '/',
     response_model=list[DonationDB],
     response_model_exclude_none=True,
+    dependencies=[Depends(current_superuser)]
 )
 async def get_all_donation_info(
     session: AsyncSession = Depends(get_async_session)
@@ -48,10 +52,11 @@ async def get_all_donation_info(
 )
 async def get_user_donation_info(
         my: int,
-        session: AsyncSession = Depends(get_async_session)
+        session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(current_user)
 ):
-    user_donation = await donation_crud.get_donations_by_user_id(
-        my, session
+    user_donation = await donation_crud.get_donations_by_user(
+        session=session, user=user
     )
     if user_donation is None:
         raise HTTPException(

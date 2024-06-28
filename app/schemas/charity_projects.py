@@ -45,12 +45,12 @@ class CharityProjectsUpdate(CharityProjectsBase):
 
 
 class CharityProjectsDB(BaseModel):
-    name: str = Field("Название проекта")
-    description: str = Field("Описание проекта")
-    full_amount: int = Field(0)
-    id: int = Field(0)
-    invested_amount: int = Field(0)
-    fully_invested: bool = Field(False)
+    name: Optional[str] = Field("Название проекта")
+    description: Optional[str] = Field("Описание проекта")
+    full_amount: Optional[int] = Field(0)
+    id: Optional[int] = Field(0)
+    invested_amount: Optional[int] = Field(0)
+    fully_invested: Optional[bool] = Field(False)
     create_date: Optional[datetime]
     close_date: Optional[datetime]
 
