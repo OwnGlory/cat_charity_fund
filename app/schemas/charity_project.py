@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field, Extra
 
 
 class CharityProjectBase(BaseModel):
+    """Базовый класс для схем проектов."""
 
     class Config:
         extra = Extra.forbid
@@ -18,6 +19,7 @@ class CharityProjectBase(BaseModel):
 
 
 class CharityProjectCreate(CharityProjectBase):
+    """схема для создания проектов."""
     name: str = Field(
         ..., min_length=1, max_length=100,
         title='Название проекта',
@@ -28,12 +30,14 @@ class CharityProjectCreate(CharityProjectBase):
 
 
 class CharityProjectUpdate(CharityProjectBase):
+    """Схема для обновления проектов."""
     name: Optional[str]
     description: Optional[str]
     full_amount: Optional[int]
 
 
 class CharityProjectDB(BaseModel):
+    """Схема для вывода информации о проете."""
     name: Optional[str] = Field("Название проекта")
     description: Optional[str] = Field("Описание проекта")
     full_amount: Optional[int] = Field(0)

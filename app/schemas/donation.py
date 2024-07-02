@@ -7,7 +7,8 @@ from pydantic import (
 
 
 class DonationBase(BaseModel):
-    full_amount: Optional[PositiveInt]
+    """Базовая схема для пожертвований."""
+    full_amount: PositiveInt
     comment: Optional[str]
 
     class Config:
@@ -22,10 +23,15 @@ class DonationBase(BaseModel):
 
 
 class DonationCreate(DonationBase):
-    full_amount: PositiveInt
+    """Схема для созданий пожертвований."""
+    pass
 
 
 class DonationAllDB(DonationBase):
+    """
+    Схема для вывода информации при создании пожертвования
+    и получении пожертвований пользователя.
+    """
     id: Optional[int]
     create_date: Optional[datetime]
 
@@ -34,6 +40,7 @@ class DonationAllDB(DonationBase):
 
 
 class DonationDB(DonationAllDB):
+    """Схема для получения всех пожертвований."""
     user_id: Optional[int]
     invested_amount: Optional[int] = Field(0)
     fully_invested: Optional[bool] = Field(False)

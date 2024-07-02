@@ -31,6 +31,9 @@ async def create_new_charity_project(
         charity_project: CharityProjectCreate,
         session: AsyncSession = Depends(get_async_session)
 ):
+    """
+    Создание объекта CharityProject с валидацией входных данных.
+    """
     data_base_work = DataBaseWork(session)
     await check_valid_name_for_project(charity_project)
     await check_name_duplicate(charity_project.name, session)
@@ -48,6 +51,9 @@ async def create_new_charity_project(
 async def get_all_charity_projects(
     session: AsyncSession = Depends(get_async_session)
 ):
+    """
+    Получение всех объектов CharityProject.
+    """
     projects_from_db = await charity_projects_crud.get_multi(session)
     return projects_from_db
 
@@ -63,6 +69,9 @@ async def partially_update_charity_project(
         obj_in: CharityProjectUpdate,
         session: AsyncSession = Depends(get_async_session)
 ):
+    """
+    Частичное обновление данных для CharityProject c валидацией.
+    """
     charity_project = await check_project_exists(
         project_id, session
     )
@@ -89,6 +98,9 @@ async def remove_charity_project(
         project_id: int,
         session: AsyncSession = Depends(get_async_session)
 ):
+    """
+    Удаление объекта CharityProject.
+    """
     charity_project = await check_project_exists(
         project_id, session
     )

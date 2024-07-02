@@ -27,6 +27,7 @@ async def create_new_donation(
         session: AsyncSession = Depends(get_async_session),
         user: User = Depends(current_user),
 ):
+    """Создание объекта Donation - пожертвования."""
     data_base_work = DataBaseWork(session)
     new_donation = await donation_crud.create(donation, session, user)
     await invest_donation(new_donation, data_base_work)
@@ -42,6 +43,7 @@ async def create_new_donation(
 async def get_all_donation_info(
     session: AsyncSession = Depends(get_async_session)
 ):
+    """Получение всех объектов Donation."""
     donation_from_db = await donation_crud.get_multi(session)
     return donation_from_db
 
@@ -54,6 +56,7 @@ async def get_user_donation_info(
         session: AsyncSession = Depends(get_async_session),
         my: User = Depends(current_user)
 ):
+    """Получение всех пожертвований пользователя."""
     user_donation = await donation_crud.get_donations_by_user(
         session=session, user=my
     )
@@ -71,6 +74,7 @@ async def get_user_donation_info(
 async def update_donation(
         session: AsyncSession = Depends(get_async_session),
 ):
+    """Метод для запрета обновления пожертвований."""
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail='Нельзя изменять пожертвования!'
@@ -83,6 +87,7 @@ async def update_donation(
 async def update_donation(
         session: AsyncSession = Depends(get_async_session),
 ):
+    """Метод для запрета удаления пожертвований."""
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail='Нельзя удалять пожертвования!'

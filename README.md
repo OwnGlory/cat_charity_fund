@@ -21,3 +21,5 @@ Alembic
 SQLAlchemy
 ## Разработчик
 Слепов В.А.
+## Профиль на GitHub:
+https://github.com/OwnGlory

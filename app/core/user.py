@@ -17,12 +17,14 @@ from app.schemas.user import UserCreate
 
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
+    """Получение пользователя из БД."""
     yield SQLAlchemyUserDatabase(session, User)
 
 bearer_transport = BearerTransport(tokenUrl='auth/jwt/login')
 
 
 def get_jwt_strategy() -> JWTStrategy:
+    """Получение токена для пользоваетля."""
     return JWTStrategy(secret=settings.secret, lifetime_seconds=3600)
 
 
@@ -34,12 +36,16 @@ auth_backend = AuthenticationBackend(
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
+    """
+    Менеджер пользователей. Класс для создания и валидации данных пользователя.
+    """
 
     async def validate_password(
         self,
         password: str,
         user: Union[UserCreate, User],
     ) -> None:
+        """Валидация данных при регистрации."""
         if len(password) < 3:
             raise InvalidPasswordException(
                 reason='Password should be at least 3 characters'
@@ -52,10 +58,12 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     async def on_after_register(
             self, user: User, request: Optional[Request] = None
     ):
+        """Уведомление о регистрации."""
         print(f'Пользователь {user.email} зарегистрирован.')
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):
+    """Запуск менеджера пользователей."""
     yield UserManager(user_db)
 
 

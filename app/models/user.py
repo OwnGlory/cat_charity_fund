@@ -6,4 +6,5 @@ from app.core.db import Base
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):
+    """Модель для таблицы Пользователи."""
     donations = relationship('Donation')

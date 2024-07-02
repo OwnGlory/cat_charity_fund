@@ -9,6 +9,7 @@ async def check_name_duplicate(
         project_name: str,
         session: AsyncSession
 ) -> None:
+    """Проверка на совпадение имени в БД."""
     project_id = await charity_projects_crud.get_project_id_by_name(
         project_name, session
     )
@@ -23,6 +24,7 @@ async def check_project_exists(
         project_id: int,
         session: AsyncSession
 ) -> CharityProject:
+    """Проверка на существование проекта в БД."""
     charity_project = await charity_projects_crud.get(
         project_id, session
     )
@@ -35,6 +37,7 @@ async def check_project_exists(
 
 
 async def check_project_open(charity_project):
+    """Проверка на состояние проекта(открыт или закрыт)."""
     if charity_project.fully_invested:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -43,6 +46,7 @@ async def check_project_open(charity_project):
 
 
 async def check_project_invested_amount(charity_project):
+    """Проверка на наличие внесенных средств."""
     if charity_project.invested_amount:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -51,10 +55,12 @@ async def check_project_invested_amount(charity_project):
 
 
 async def check_project_full_amount(obj_in, charity_project):
+    """Проверяется меньше ли требуемая сумма уже внесенной."""
     if (
         obj_in.full_amount and
         obj_in.full_amount < charity_project.invested_amount
     ):
+
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Требуемая сумма не может быть меньше уже вложенной!"
@@ -62,6 +68,7 @@ async def check_project_full_amount(obj_in, charity_project):
 
 
 async def check_valid_name_for_project(obj_in):
+    """Валидация имени."""
     if (
         obj_in.name is None or len(obj_in.name) > 100 or
         not obj_in.name.strip()
@@ -73,6 +80,7 @@ async def check_valid_name_for_project(obj_in):
 
 
 async def check_valid_full_amount_for_project(obj_in):
+    """Валидация требуемой суммы."""
     if obj_in.full_amount is not None and obj_in.full_amount <= 0:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -81,6 +89,7 @@ async def check_valid_full_amount_for_project(obj_in):
 
 
 async def check_valid_description_for_project(obj_in):
+    """Валидация описания проекта."""
     if obj_in.description is not None and not obj_in.description.strip():
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
