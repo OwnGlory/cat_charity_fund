@@ -1,11 +1,21 @@
 from typing import Optional
+from datetime import timedelta
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.encoders import jsonable_encoder
 
 from app.models import CharityProject
 from app.crud.base import CRUDBase
+
+
+def format_timediff(timediff: timedelta) -> str:
+    total_seconds = int(timediff.total_seconds())
+    days, remainder = divmod(total_seconds, 86400)
+    hours, remainder = divmod(remainder, 3600)
+    minutes, remainder = divmod(remainder, 60)
+    seconds, microseconds = divmod(remainder, 1)
+    return f"{days} days, {hours}:{minutes}:{seconds}.{microseconds:06d}"
 
 
 class CRUDCharityProject(CRUDBase):
@@ -77,6 +87,33 @@ class CRUDCharityProject(CRUDBase):
             )
         )
         return db_project_id.scalars().first()
+
+    async def get_all_close_project(
+            self,
+            session: AsyncSession,
+    ) -> list[dict[str, str, str]]:
+        difference_stmt = (
+            func.julianday(CharityProject.close_date) -
+            func.julianday(CharityProject.create_date)
+        )
+        close_projects = await session.execute(
+            select([CharityProject])
+            .where(CharityProject.fully_invested == 1,)
+            .order_by(difference_stmt)
+        )
+        close_projects = close_projects.scalars().all()
+        projects_list = [
+            {
+                'name': project.name,
+                'duration': format_timediff(
+                    project.close_date - project.create_date
+                ),
+                'description': project.description
+            }
+            for project in close_projects
+        ]
+        print(projects_list)
+        return projects_list
 
 
 charity_projects_crud = CRUDCharityProject(CharityProject)

@@ -17,5 +17,5 @@ class CharityProject(BaseData, Base):
 
     def __repr__(self):
         return (
-            f'Проект {self.name} уже полностью инвестирован'
+            f'Проект {self.name}'
         )
