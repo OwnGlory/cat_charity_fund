@@ -133,3 +133,6 @@ dmypy.json
 
 # DataBase
 .db
+
+# OpenAPI
+openapi.json
